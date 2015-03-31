@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.net.URI;
+
 
 public class MainActivity extends Activity {
 

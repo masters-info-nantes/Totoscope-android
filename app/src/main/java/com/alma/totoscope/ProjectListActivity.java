@@ -23,12 +23,11 @@ import android.widget.ArrayAdapter;
 
 public class ProjectListActivity extends Activity {
 
-    final Context context = this;
+    public static final int CAMERA_VIDEO_REQUEST = 0;
+    public static final int GALLERY_VIDEO_REQUEST = 1;
+
     ListView listView;
     MenuItem newProject;
-    //AlertDialog.Builder sourcesDialog;
-    //ImageButton gallery;
-    //ImageButton camera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,66 +36,6 @@ public class ProjectListActivity extends Activity {
         listView = (ListView)findViewById(R.id.list);
         newProject = (MenuItem) findViewById(R.id.action_newProject);
 
-
-        /*newProject.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-
-                alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.i("Bouton", "yes");
-                    }
-                });
-                alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.i("Bouton", "no");
-                    }
-                });
-
-
-                //AlertDialog.Builder sourcesDialog = new AlertDialog.Builder(context);
-                //sourcesDialog.setTitle("Choix de la source");
-                /*sourcesDialog.setPositiveButton("Camera"/*R.id.camera, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent takeVid = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        startActivityForResult(takeVid, 0);
-                    }
-                });*/
-                /*sourcesDialog.setNegativeButton("Gallery"/*R.id.gallery, new DialogInterface.OnClickListener() {
-                    /*@Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent takeVid = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        startActivityForResult(takeVid, 0);
-                    }
-                });*/
-                //sourcesDialog.getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-               //sourcesDialog.setContentView(getLayoutInflater().inflate(R.layout.sources_layout,null));
-               //sourcesDialog.show();
-        //    }
-        //});
-
-        /*camera = (ImageButton)findViewById(R.id.camera);
-        camera.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent takeVid = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                startActivityForResult(takeVid, 0);
-            }
-        });
-
-        gallery = (ImageButton)findViewById(R.id.gallery);
-        gallery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto,1);
-            }
-        });
-        */
         String[] values = new String[]{"coucou","lol","swag","poney"};
 
 
@@ -111,8 +50,6 @@ public class ProjectListActivity extends Activity {
         });
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -122,12 +59,7 @@ public class ProjectListActivity extends Activity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_newProject) {
             newProjectDialog();
             return true;
@@ -147,7 +79,7 @@ public class ProjectListActivity extends Activity {
                         Intent pickVid = new Intent(Intent.ACTION_GET_CONTENT);
                         pickVid.addCategory(Intent.CATEGORY_OPENABLE);
                         pickVid.setType("video/*");
-                        startActivityForResult(pickVid, 1);
+                        startActivityForResult(pickVid, GALLERY_VIDEO_REQUEST);
                     }
                 })
                 .setNegativeButton("Camera",  new DialogInterface.OnClickListener() {
@@ -155,7 +87,7 @@ public class ProjectListActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         Log.i("Click", "Open Camera");
                         Intent takeVid = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-                        startActivityForResult(takeVid, 0);
+                        startActivityForResult(takeVid, CAMERA_VIDEO_REQUEST);
                     }
                 });
 
@@ -169,5 +101,25 @@ public class ProjectListActivity extends Activity {
         Button camera = sourcesDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
         camera.setCompoundDrawablesWithIntrinsicBounds(this.getResources().getDrawable(R.drawable.camera), null, null, null);
         camera.setText("");
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == RESULT_OK){
+            if(requestCode == CAMERA_VIDEO_REQUEST){
+                Intent intent = new Intent(ProjectListActivity.this, NewProjectActivity.class);
+                intent.putExtra("VIDPATH", "uri");
+                startActivity(intent);
+                Log.i("MainActivity","CAMERA_VIDEO_REQUEST");
+            }
+            if(requestCode == GALLERY_VIDEO_REQUEST) {
+                Intent intent = new Intent(ProjectListActivity.this, NewProjectActivity.class);
+                intent.putExtra("VIDPATH", "uri");
+                startActivity(intent);
+                Log.i("MainActivity","GALLERY_VIDEO_REQUEST");
+            }
+        }
     }
 }

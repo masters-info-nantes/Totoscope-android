@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="frame_array">
+        <item>6 images/sec</item>
+        <item>8 images/sec</item>
+        <item>18 images/sec</item>
+        <item>24 images/sec</item>
+    </string-array>
+</resources>
