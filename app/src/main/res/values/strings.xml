@@ -6,4 +6,5 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_sources">SourcesActivity</string>
     <string name="title_activity_new_project">NewProjectActivity</string>
+    <string name="title_activity_color_picker">ColorPickerActivity</string>
 </resources>

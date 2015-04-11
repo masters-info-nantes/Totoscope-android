@@ -2,23 +2,24 @@ package com.alma.totoscope;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.Context;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.ImageButton;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 public class ProjectListActivity extends Activity {
@@ -36,16 +37,82 @@ public class ProjectListActivity extends Activity {
         listView = (ListView)findViewById(R.id.list);
         newProject = (MenuItem) findViewById(R.id.action_newProject);
 
-        String[] values = new String[]{"coucou","lol","swag","poney"};
+        //String[] values = new String[]{"projet0","projet1","projet2","projet3"};
+        final List<String> values = new ArrayList<String>();
+            values.add("MonPoney");
+            values.add("Project1");
 
-
-        ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,values);
+        final ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,values);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
                 Intent intent = new Intent(ProjectListActivity.this, MainActivity.class);
                 startActivity(intent);
+            }
+        });
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(final AdapterView<?> arg0, View view, int pos, final long id) {
+
+                CharSequence options[] = new CharSequence[] {"Supprimer", "Renommer", "Afficher les détails"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProjectListActivity.this);
+                builder.setTitle("Options");
+                builder.setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0 : //Supprimer
+                                    Log.i("Options","Supprimer");
+                                    break;
+                            case 1 : //Renommer
+                                    Log.i("Options","Renommer");
+                                    AlertDialog.Builder renameBuilder = new AlertDialog.Builder(ProjectListActivity.this);
+                                    final EditText name = new EditText(ProjectListActivity.this);
+                                    renameBuilder.setTitle("Renommer")
+                                         .setView(name)
+                                         .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                             @Override
+                                             public void onClick(DialogInterface dialog, int which) {
+                                                 Log.d("Input", name.getText().toString());
+                                                 values.set((int) id, name.getText().toString());
+                                                 adapter.notifyDataSetChanged();
+                                             }
+                                         });
+
+                                    AlertDialog renameDialog = renameBuilder.create();
+                                    renameDialog.show();
+                                    break;
+                            case 2 : //Supprimer
+                                    Log.i("Options","Détails");
+                                    AlertDialog.Builder removeBuilder = new AlertDialog.Builder(ProjectListActivity.this);
+                                    removeBuilder.setTitle("Supprimer")
+                                        .setMessage("Confirmer la suppression?")
+                                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        })
+                                        .setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Log.d("Suppression", "OK");
+                                                values.remove((int) id);
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    AlertDialog removeDialog = removeBuilder.create();
+                                    removeDialog.show();
+                                    break;
+                        }
+                    }
+                });
+                builder.show();
+
+
+                return true;
             }
         });
     }
@@ -96,11 +163,11 @@ public class ProjectListActivity extends Activity {
 
         Button gallery = sourcesDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         gallery.setCompoundDrawablesWithIntrinsicBounds(this.getResources().getDrawable(R.drawable.collection), null, null, null);
-        gallery.setText("");
+        gallery.setText("Gallerie");
 
         Button camera = sourcesDialog.getButton(AlertDialog.BUTTON_NEGATIVE);
         camera.setCompoundDrawablesWithIntrinsicBounds(this.getResources().getDrawable(R.drawable.camera), null, null, null);
-        camera.setText("");
+        camera.setText("Camera");
 
     }
 
