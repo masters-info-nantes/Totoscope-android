@@ -14,6 +14,9 @@ import android.util.SparseArray;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+/* Classe de la zone de dessins*/
 
 public class DrawingZone  extends View {
 
@@ -26,6 +29,8 @@ public class DrawingZone  extends View {
     private Paint imgPaint;
     private Bitmap bitmap;
     private Canvas canvas;
+    private int width;
+    private int height;
 
     private Path path;
     private Path circlePath;
@@ -51,6 +56,7 @@ public class DrawingZone  extends View {
     }
 
     private void initialisation(Context c) {
+        // Initialisation
         paint = new Paint();
         paint.setAntiAlias(true);
         paint.setDither(true);
@@ -72,6 +78,8 @@ public class DrawingZone  extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        width = w;
+        height = h;
         bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(bitmap);
     }
@@ -93,6 +101,7 @@ public class DrawingZone  extends View {
     }
 
     @Override
+    // Listener de la zone de dessin
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
@@ -138,35 +147,63 @@ public class DrawingZone  extends View {
         path.reset();
     }
 
+    // Réinitialisation
+    public void reinit() {
+        //canvas.drawColor(0, PorterDuff.Mode.CLEAR);
+        //this.invalidate();
+    }
+
+    // Activation du crayon
     public void setPen() {
         eraser = false;
         //paint.setXfermode(null);
     }
 
+    // Change la couleur du crayon
     public void setColor(int color) {
         eraser = false;
         paint.setXfermode(null);
         paint.setColor(color);
     }
 
+    // Change la taille du crayon
     public void setPenSize(int size){
         paint.setStrokeWidth(size);
         penSize = size;
     }
 
+    // Activation de la gomme
     public void erase() {
         eraser = true;
         //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.CLEAR));
     }
 
+    // Frame suivante
     public void nextFrame() {
         //TODO
+        Toast toast = Toast.makeText(context,"Image Suivante",Toast.LENGTH_SHORT);
+        toast.show();
     }
 
+    // Frame précédente
     public void previousFrame() {
         //TODO
+        Toast toast = Toast.makeText(context,"Image Précédente",Toast.LENGTH_SHORT);
+        toast.show();
     }
 
+    // Lecture des dessins
+    public void play() {
+        Toast toast = Toast.makeText(context,"Lecture des dessins",Toast.LENGTH_SHORT);
+        toast.show();
+    }
+
+    // arrêt de la lecture
+    public void stop() {
+        Toast toast = Toast.makeText(context,"Arrêt lecture",Toast.LENGTH_SHORT);
+        toast.show();
+    }
+    /*
     public Canvas getCanvas() {
         return canvas;
     }
@@ -183,7 +220,7 @@ public class DrawingZone  extends View {
     public void setBitmap(Bitmap bitmap) {
         this.bitmap = bitmap;
     }
-
+    */
 
 
 }

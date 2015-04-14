@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,12 +16,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ArrayAdapter;
-import android.widget.TextView;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
+/* Fenêtre de démarrage contenant la liste des projets*/
 
 public class ProjectListActivity extends Activity {
 
@@ -33,17 +32,20 @@ public class ProjectListActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_project_list);
         listView = (ListView)findViewById(R.id.list);
         newProject = (MenuItem) findViewById(R.id.action_newProject);
 
-        //String[] values = new String[]{"projet0","projet1","projet2","projet3"};
+        /* Création de la liste */
         final List<String> values = new ArrayList<String>();
             values.add("MonPoney");
             values.add("Project1");
 
+        /* Mise en forme et ajout d'un listener*/
         final ArrayAdapter<String> adapter= new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,android.R.id.text1,values);
         listView.setAdapter(adapter);
+        // clic court -> import vers la fenêtre principale
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long id) {
@@ -51,6 +53,7 @@ public class ProjectListActivity extends Activity {
                 startActivity(intent);
             }
         });
+        // clic long -> ouverture du menu contextuel
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(final AdapterView<?> arg0, View view, int pos, final long id) {
@@ -64,7 +67,26 @@ public class ProjectListActivity extends Activity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0 : //Supprimer
-                                    Log.i("Options","Supprimer");
+                                    Log.i("Options", "Supprimer");
+                                    AlertDialog.Builder removeBuilder = new AlertDialog.Builder(ProjectListActivity.this);
+                                    removeBuilder.setTitle("Supprimer")
+                                            .setMessage("Confirmer la suppression?")
+                                            .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+
+                                                }
+                                            })
+                                            .setPositiveButton("Valider", new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog, int which) {
+                                                    Log.d("Suppression", "OK");
+                                                    values.remove((int) id);
+                                                    adapter.notifyDataSetChanged();
+                                                }
+                                            });
+                                    AlertDialog removeDialog = removeBuilder.create();
+                                    removeDialog.show();
                                     break;
                             case 1 : //Renommer
                                     Log.i("Options","Renommer");
@@ -84,34 +106,19 @@ public class ProjectListActivity extends Activity {
                                     AlertDialog renameDialog = renameBuilder.create();
                                     renameDialog.show();
                                     break;
-                            case 2 : //Supprimer
+                            case 2 : //Afficher les détails
                                     Log.i("Options","Détails");
-                                    AlertDialog.Builder removeBuilder = new AlertDialog.Builder(ProjectListActivity.this);
-                                    removeBuilder.setTitle("Supprimer")
-                                        .setMessage("Confirmer la suppression?")
-                                        .setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
+                                    AlertDialog.Builder infoBuilder = new AlertDialog.Builder(ProjectListActivity.this);
+                                    infoBuilder.setTitle("Informations")
+                                            .setMessage(TextUtils.concat("Nom du projet : ",values.get((int)id)));
 
-                                            }
-                                        })
-                                        .setPositiveButton("Valider", new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                Log.d("Suppression", "OK");
-                                                values.remove((int) id);
-                                                adapter.notifyDataSetChanged();
-                                            }
-                                        });
-                                    AlertDialog removeDialog = removeBuilder.create();
-                                    removeDialog.show();
+                                    AlertDialog infoDialog = infoBuilder.create();
+                                    infoDialog.show();
                                     break;
                         }
                     }
                 });
                 builder.show();
-
-
                 return true;
             }
         });
@@ -127,6 +134,7 @@ public class ProjectListActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        // Création d'un noveau projet
         if (id == R.id.action_newProject) {
             newProjectDialog();
             return true;
@@ -135,9 +143,11 @@ public class ProjectListActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    // Fenêtre de création d'un nouveau projet
     public void newProjectDialog() {
         Log.i("call", "newProjectDialog");
 
+        /* Choix de la source*/
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
                     @Override
@@ -161,6 +171,7 @@ public class ProjectListActivity extends Activity {
         AlertDialog sourcesDialog = builder.create();
         sourcesDialog.show();
 
+        //Affiche une image sur les boutons
         Button gallery = sourcesDialog.getButton(AlertDialog.BUTTON_POSITIVE);
         gallery.setCompoundDrawablesWithIntrinsicBounds(this.getResources().getDrawable(R.drawable.collection), null, null, null);
         gallery.setText("Gallerie");
@@ -174,6 +185,7 @@ public class ProjectListActivity extends Activity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        /* Ouverture de l'activité selon le choix de la source*/
         if(resultCode == RESULT_OK){
             if(requestCode == CAMERA_VIDEO_REQUEST){
                 Intent intent = new Intent(ProjectListActivity.this, NewProjectActivity.class);

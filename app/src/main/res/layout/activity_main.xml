@@ -9,7 +9,7 @@
     android:id="@+id/mainLayout">
 
     <FrameLayout
-        android:layout_width="560dp"
+        android:layout_width="555dp"
         android:layout_height="fill_parent"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"

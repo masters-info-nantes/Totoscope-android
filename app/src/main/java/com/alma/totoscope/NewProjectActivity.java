@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+/* Fenêtre de création d'un projet*/
 
 public class NewProjectActivity extends Activity {
 
@@ -25,6 +26,7 @@ public class NewProjectActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // Initialisation des éléments
         setContentView(R.layout.activity_new_project);
         vidPath = (TextView)findViewById(R.id.vidpath);
         modifier = (Button)findViewById(R.id.vidmodifier);
@@ -42,7 +44,7 @@ public class NewProjectActivity extends Activity {
             }
         });
 
-
+        // Création du spinner du nombre de frames
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.frame_array , android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         frameRate.setAdapter(adapter);
@@ -58,11 +60,13 @@ public class NewProjectActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        // Menu
         switch (id) {
-            case R.id.action_BACK:
-                //back
+            case R.id.action_BACK: //Retour
+                onBackPressed();
                 return true;
-            case R.id.action_OK:
+            case R.id.action_OK: // Valider
+                //editProject.getText().toString()
                 Intent intent = new Intent(NewProjectActivity.this, MainActivity.class);
                 //intent.putExtra();
                 startActivity(intent);
